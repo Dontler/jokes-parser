@@ -1,0 +1,14 @@
+{
+    "name": "dontler/jokes-parser",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Антон Илясов",
+            "email": "ai@intervolga.ru"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {"Acme\\": "src/"}
+    }
+}
