@@ -1,0 +1,11 @@
+RewriteEngine on
+
+RewriteBase /
+
+Options +FollowSymLinks
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.html
+
+RewriteCond %{REQUEST_URI} ^/api/*
+RewriteRule ^(.*)$ /api/index.php

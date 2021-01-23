@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App;
+namespace App\Jokes;
 
 
 use DOMNode;
@@ -34,14 +34,16 @@ class JokesService {
         /** @var DOMNode $item */
         foreach ($articleBody as $item) {
             if ($item->nodeValue === "\u{00A0}") {
-                $jokes[] = new Joke($joke);
+                $jokeRating = $this->getJokeRating($joke);
+                $jokes[] = new Joke($joke, $jokeRating);
                 $joke = '';
                 continue;
             }
 
             $joke .= $item->nodeValue . PHP_EOL;
         }
-        $jokes[] = new Joke($joke);
+        $jokeRating = $this->getJokeRating($joke);
+        $jokes[] = new Joke($joke, $jokeRating);
 
         return $jokes;
     }
@@ -56,5 +58,29 @@ class JokesService {
 
         return $result;
     }
+
+    private function getJokeRating(string $jokeText): int {
+        $url = 'https://www.anekdot.ru/search/?query=';
+        $query = urlencode($jokeText);
+
+        $uri = $url . $query;
+
+        $result = file_get_contents($uri);
+
+        $document = new \DOMDocument('', 'UTF-8');
+        $document->loadHTML($result);
+
+        $xPath = new \DOMXPath($document);
+        $marks = $xPath->query('//div[@class="rates"]');
+
+        $mark = $marks->item(0)->attributes->item(2)->nodeValue;
+
+        $mark = (explode(';', $mark));
+
+        $rating = ($mark[2] / $mark[1]);
+
+        return (int) ($rating * 10);
+    }
+
 
 }
